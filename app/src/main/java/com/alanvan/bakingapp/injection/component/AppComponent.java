@@ -1,10 +1,11 @@
 package com.alanvan.bakingapp.injection.component;
 
 import com.alanvan.bakingapp.MainFragment;
-import com.alanvan.bakingapp.injection.module.AppContextModule;
 import com.alanvan.bakingapp.injection.module.AppServiceModule;
+import com.alanvan.bakingapp.injection.subcomponent.AppServiceComponent;
 
 import javax.inject.Singleton;
+
 import dagger.Component;
 
 /**
@@ -12,7 +13,7 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = AppServiceModule.class)
-public interface AppComponent {
+public interface AppComponent extends AppServiceComponent {
 
     void inject(MainFragment mainFragment);
 

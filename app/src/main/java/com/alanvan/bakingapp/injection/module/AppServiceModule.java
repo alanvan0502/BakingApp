@@ -1,6 +1,9 @@
 package com.alanvan.bakingapp.injection.module;
 
-import com.alanvan.bakingapp.injection.RecipeRepository;
+import com.alanvan.bakingapp.network.endpoints.RecipeEndPoint;
+import com.alanvan.bakingapp.network.service.NetworkServiceFactory;
+import com.alanvan.bakingapp.repository.RecipeRepository;
+import com.alanvan.bakingapp.repository.RepositoryManager;
 
 import javax.inject.Singleton;
 
@@ -12,15 +15,27 @@ import dagger.Provides;
  */
 @Module
 public class AppServiceModule {
-    RecipeRepository mRepository;
+    private RepositoryManager mRepositoryManager;
 
     public AppServiceModule() {
-        mRepository = RecipeRepository.getInstance();
+        mRepositoryManager = RepositoryManager.getInstance();
     }
 
     @Provides
     @Singleton
     RecipeRepository provideRecipeRepository() {
-        return mRepository;
+        return mRepositoryManager.getRecipeRepository();
+    }
+
+    @Provides
+    @Singleton
+    RecipeEndPoint provideNetworkService() {
+        return NetworkServiceFactory.createService(RecipeEndPoint.class, RecipeEndPoint.ENDPOINT);
+    }
+
+    @Provides
+    @Singleton
+    RepositoryManager provideRepositoryManager() {
+        return RepositoryManager.getInstance();
     }
 }
