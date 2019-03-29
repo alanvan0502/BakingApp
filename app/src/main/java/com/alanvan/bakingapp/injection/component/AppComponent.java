@@ -1,6 +1,6 @@
 package com.alanvan.bakingapp.injection.component;
 
-import com.alanvan.bakingapp.MainFragment;
+import com.alanvan.bakingapp.BaseFragment;
 import com.alanvan.bakingapp.injection.module.AppServiceModule;
 import com.alanvan.bakingapp.injection.subcomponent.AppServiceComponent;
 
@@ -15,6 +15,6 @@ import dagger.Component;
 @Component(modules = AppServiceModule.class)
 public interface AppComponent extends AppServiceComponent {
 
-    void inject(MainFragment mainFragment);
+    void inject(BaseFragment mainFragment);
 
 }

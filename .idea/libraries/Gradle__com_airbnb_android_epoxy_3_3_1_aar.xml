@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.airbnb.android:epoxy:3.3.1@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/epoxy-3.3.1.aar/f7f200b8271dfbefb1326a7c25bcb3df/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/epoxy-3.3.1.aar/f7f200b8271dfbefb1326a7c25bcb3df/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/epoxy-3.3.1.aar/f7f200b8271dfbefb1326a7c25bcb3df/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.airbnb.android/epoxy/3.3.1/fba5c61581121dcf1f5a15832513aea0ced3cd74/epoxy-3.3.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

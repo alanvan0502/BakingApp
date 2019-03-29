@@ -1,8 +1,6 @@
-package com.alanvan.bakingapp.ui;
+package com.alanvan.bakingapp.ui.recipe_detail;
 
-import com.alanvan.bakingapp.BasePresenter;
-
-public class MainPresenter implements BasePresenter {
+public class RecipeDetailPresenter implements RecipeDetailFragmentContract.PresenterContract {
 
     @Override
     public void subscribe() {
