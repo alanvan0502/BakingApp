@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.alanvan.bakingapp.R;
 
-public class StepDetailFragment extends Fragment implements StepDetailFragmentContract.ViewContract{
+public class StepDetailFragment extends Fragment {
 
     public StepDetailFragment() {
     }
@@ -36,8 +36,4 @@ public class StepDetailFragment extends Fragment implements StepDetailFragmentCo
         super.onDetach();
     }
 
-    @Override
-    public Object getPresenter() {
-        return null;
-    }
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="recipeDetailItemClick"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
+        android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:onClick="@{recipeDetailItemClick}"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="@dimen/material_baseline_grid_1x"
+            android:paddingEnd="@dimen/material_baseline_grid_1x"
+            android:paddingTop="@dimen/material_baseline_grid_1.5x"
+            android:paddingBottom="@dimen/material_baseline_grid_1.5x"
+>
+
+            <TextView
+                android:id="@+id/step_short_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/material_typography_regular_body_1_text_size"
+                android:layout_alignParentStart="true"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_play_arrow_black_24dp"
+                android:tint="@color/colorPrimaryDark"
+                tools:ignore="ContentDescription"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:background="@color/material_color_grey_500"/>
+
+    </LinearLayout>
+
+
+</layout>

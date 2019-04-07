@@ -36,17 +36,7 @@ public class RemoteDataSource implements DataSource {
     }
 
     @Override
-    public Observable<List<Step>> getSteps() {
-        return null;
-    }
-
-    @Override
-    public Observable<List<Ingredient>> getIngredients() {
-        return null;
-    }
-
-    @Override
     public void saveRecipes(List<Recipe> recipeList) {
-
+        //Not implemented
     }
 }

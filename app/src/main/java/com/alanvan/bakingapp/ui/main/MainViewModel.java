@@ -1,41 +1,59 @@
 package com.alanvan.bakingapp.ui.main;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
+import com.alanvan.bakingapp.BaseFragment;
+import com.alanvan.bakingapp.BaseViewModel;
+import com.alanvan.bakingapp.R;
 import com.alanvan.bakingapp.injection.Injector;
 import com.alanvan.bakingapp.model.Recipe;
 import com.alanvan.bakingapp.repository.RecipeRepository;
 import com.alanvan.bakingapp.ui.epoxy.BaseEpoxyModel;
 import com.alanvan.bakingapp.ui.epoxy.MainItemEpoxyModel_;
+import com.alanvan.bakingapp.ui.recipe_detail.RecipeDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
 
-public class MainViewModel extends ViewModel {
+import static com.alanvan.bakingapp.Constants.RECIPE_ID;
+
+public class MainViewModel extends BaseViewModel {
 
     private Observable<List<Recipe>> loadDataFromRepository() {
         RecipeRepository recipeRepository = Injector.getAppComponent().repositoryManager().getRecipeRepository();
         return recipeRepository.getRecipes();
     }
 
-    public Observable<List<BaseEpoxyModel>> setupView(MainFragment fragment) {
+    @Override
+    public Observable<List<BaseEpoxyModel>> setupView(BaseFragment fragment) {
         Context context = fragment.getContext();
-
         return loadDataFromRepository().flatMap(recipeList ->
                 Observable.fromCallable(() -> {
                     List<BaseEpoxyModel> models = new ArrayList<>();
 
-                    int id = 0;
                     for (Recipe recipe: recipeList) {
+                        assert context != null;
                         models.add(new MainItemEpoxyModel_(fragment)
-                                .id(MainViewModel.class.getName() + id)
+                                .id(MainViewModel.class.getName() + recipe.getId())
                                 .mainRecipeName(recipe.getName())
-                                .mainRecipeServings(recipe.getServings().toString()));
-                        id += 1;
+                                .mainRecipeServings(context.getString(R.string.servings) + " " + recipe.getServings().toString())
+                                .mainItemClick(v -> {
+                                    Activity activity = fragment.getActivity();
+
+                                    Intent intent = new Intent(activity, RecipeDetailActivity.class);
+
+                                    intent.putExtra(RECIPE_ID, recipe.getId());
+
+                                    if (activity != null) {
+                                        activity.startActivity(intent);
+                                    }
+                                }));
                     }
                     return models;
                 }));

@@ -1,34 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-
+        <variable
+            name="mainItemClick"
+            type="android.view.View.OnClickListener"/>
     </data>
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp">
+        android:clickable="true"
+        android:layout_margin="@dimen/main_item_card_margin"
+        android:focusable="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:paddingTop="@dimen/material_baseline_grid_3x"
+            android:paddingBottom="@dimen/material_baseline_grid_3x"
+            android:background="?attr/selectableItemBackground"
+            android:onClick="@{mainItemClick}"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/main_recipe_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/recipe_image"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/material_card_title_block_padding_horizontal"
+                android:paddingEnd="@dimen/material_card_title_block_padding_horizontal"
+                app:srcCompat="@drawable/recipe_icon"
+                android:contentDescription="@string/recipe_icon"/>
 
-            <TextView
-                android:id="@+id/main_recipe_name"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/main_recipe_servings"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                <TextView
+                    android:id="@+id/main_recipe_name"
+                    android:layout_width="wrap_content"
+                    android:textSize="@dimen/material_card_title_block_large_title_text_size"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/main_recipe_servings"
+                    android:layout_width="wrap_content"
+                    android:textSize="@dimen/material_card_title_block_subtitle_text_size"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </android.support.v7.widget.CardView>

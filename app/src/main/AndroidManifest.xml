@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.alanvan.bakingapp">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,21 +13,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.step_detail.StepDetail"></activity>
-        <activity android:name=".ui.recipe_detail.RecipeDetail" />
+        <activity
+            android:name=".ui.step_detail.StepDetail"
+            android:parentActivityName=".ui.recipe_detail.RecipeDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.step_detail.StepDetail"/>
+        </activity>
+        <activity
+            android:name=".ui.recipe_detail.RecipeDetailActivity"
+            android:parentActivityName=".ui.main.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.main.MainActivity"/>
+        </activity>
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".BaseActivity"
-            android:parentActivityName=".ui.main.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.main.MainActivity" />
         </activity>
     </application>
 

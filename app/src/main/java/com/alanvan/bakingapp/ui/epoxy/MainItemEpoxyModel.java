@@ -1,8 +1,8 @@
 package com.alanvan.bakingapp.ui.epoxy;
 
 import android.databinding.ViewDataBinding;
+import android.view.View;
 
-import com.airbnb.epoxy.AutoModel;
 import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyModelClass;
 import com.alanvan.bakingapp.BaseFragment;
@@ -13,7 +13,7 @@ import com.alanvan.bakingapp.databinding.MainItemBinding;
 public abstract class MainItemEpoxyModel extends BaseEpoxyModel {
 
     @EpoxyAttribute
-    public int mainRecipeImage;
+    public View.OnClickListener mainItemClick;
 
     @EpoxyAttribute
     public String mainRecipeName;
@@ -30,8 +30,8 @@ public abstract class MainItemEpoxyModel extends BaseEpoxyModel {
 
         MainItemBinding mainItemBinding = (MainItemBinding) binding;
 
-        mainItemBinding.mainRecipeImage.setImageResource(mainRecipeImage);
         mainItemBinding.mainRecipeName.setText(mainRecipeName);
         mainItemBinding.mainRecipeServings.setText(mainRecipeServings);
+        mainItemBinding.setMainItemClick(mainItemClick);
     }
 }
