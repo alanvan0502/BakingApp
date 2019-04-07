@@ -7,8 +7,7 @@ public abstract class BaseEpoxyModel extends DataBindingEpoxyModel {
 
     protected BaseFragment fragment;
 
-    BaseEpoxyModel(BaseFragment fragment) {
+    public BaseEpoxyModel(BaseFragment fragment) {
         this.fragment = fragment;
     }
-
 }

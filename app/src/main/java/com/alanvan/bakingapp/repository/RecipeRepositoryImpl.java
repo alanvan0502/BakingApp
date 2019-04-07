@@ -30,7 +30,7 @@ public class RecipeRepositoryImpl implements RecipeRepository {
     //TODO: implement
     @Override
     public Observable<List<Recipe>> getRecipes() {
-        return Observable.just(new ArrayList<>());
+        return remoteDataSource.getRecipes();
     }
 
     //TODO: implement
