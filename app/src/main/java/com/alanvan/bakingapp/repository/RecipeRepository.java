@@ -12,9 +12,7 @@ public interface RecipeRepository {
 
     Observable<List<Recipe>> getRecipes();
 
-    Observable<List<Step>> getSteps();
-
-    Observable<List<Ingredient>> getIngredients();
-
     void saveRecipes(List<Recipe> recipeList);
+
+    void markRepoAsSynced();
 }

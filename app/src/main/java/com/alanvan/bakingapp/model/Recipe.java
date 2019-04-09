@@ -3,27 +3,43 @@ package com.alanvan.bakingapp.model;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.j256.ormlite.field.DatabaseField;
 
 public class Recipe {
 
+    public static final String TABLE_NAME = "recipes";
+    public static final String COLUMN_RECIPE_ID = "recipe_id";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_SERVINGS = "servings";
+    public static final String COLUMN_IMAGE = "image";
+
+    @DatabaseField(id = true, columnName = COLUMN_RECIPE_ID)
     @SerializedName("id")
     @Expose
     private Integer id;
+
+    @DatabaseField(columnName = COLUMN_NAME)
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("ingredients")
-    @Expose
-    private List<Ingredient> ingredients = null;
-    @SerializedName("steps")
-    @Expose
-    private List<Step> steps = null;
+
+    @DatabaseField(columnName = COLUMN_SERVINGS)
     @SerializedName("servings")
     @Expose
     private Integer servings;
+
+    @DatabaseField(columnName = COLUMN_IMAGE)
     @SerializedName("image")
     @Expose
     private String image;
+
+    @SerializedName("ingredients")
+    @Expose
+    private List<Ingredient> ingredients = null;
+
+    @SerializedName("steps")
+    @Expose
+    private List<Step> steps = null;
 
     public Integer getId() {
         return id;
@@ -73,4 +89,15 @@ public class Recipe {
         this.image = image;
     }
 
+    // Builder
+    public abstract static class Builder {
+        public abstract Builder id(int id);
+        public abstract Builder name(String name);
+        public abstract Builder ingredients(List<Ingredient> ingredients);
+        public abstract Builder steps(List<Step> steps);
+        public abstract Builder servings(int servings);
+        public abstract Builder image(String image);
+
+        public abstract Recipe build();
+    }
 }

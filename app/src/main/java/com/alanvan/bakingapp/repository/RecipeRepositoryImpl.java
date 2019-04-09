@@ -6,6 +6,7 @@ import com.alanvan.bakingapp.datasource.RemoteDataSource;
 import com.alanvan.bakingapp.model.Ingredient;
 import com.alanvan.bakingapp.model.Recipe;
 import com.alanvan.bakingapp.model.Step;
+import com.alanvan.bakingapp.utils.CacheHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,31 +23,33 @@ public class RecipeRepositoryImpl implements RecipeRepository {
     private final DataSource localDataSource;
 
     @Inject
+    CacheHelper cacheHelper;
+
+    @Inject
     public RecipeRepositoryImpl() {
         remoteDataSource = RemoteDataSource.getInstance();
         localDataSource = LocalDataSource.getInstance();
     }
 
-    //TODO: implement
     @Override
     public Observable<List<Recipe>> getRecipes() {
-        return remoteDataSource.getRecipes();
-    }
-
-    //TODO: implement
-    @Override
-    public Observable<List<Step>> getSteps() {
-        return Observable.just(new ArrayList<>());
-    }
-
-    //TODO: implement
-    @Override
-    public Observable<List<Ingredient>> getIngredients() {
-        return Observable.just(new ArrayList<>());
+        if (cacheHelper.isDataSynced()) {
+            return localDataSource.getRecipes();
+        } else {
+            return remoteDataSource.getRecipes().doOnNext(recipeList -> {
+                localDataSource.saveRecipes(recipeList);
+                cacheHelper.setRecipeSynced(true);
+            });
+        }
     }
 
     @Override
     public void saveRecipes(List<Recipe> recipeList) {
+        localDataSource.saveRecipes(recipeList);
+    }
 
+    @Override
+    public void markRepoAsSynced() {
+        cacheHelper.setRecipeSynced(true);
     }
 }

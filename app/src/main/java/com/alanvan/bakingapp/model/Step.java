@@ -59,4 +59,15 @@ public class Step {
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
     }
+
+    // Builder
+    public abstract static class Builder {
+        public abstract Builder id(int id);
+        public abstract Builder shortDescription(String shortDescription);
+        public abstract Builder description(String description);
+        public abstract Builder videoURL(String videoURL);
+        public abstract Builder thumbnailURL(String thumbnailURL);
+
+        public abstract Step build();
+    }
 }

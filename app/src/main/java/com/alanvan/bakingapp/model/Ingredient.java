@@ -3,6 +3,8 @@ package com.alanvan.bakingapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Ingredient {
 
     public static final String CUP = "cup";
@@ -44,5 +46,14 @@ public class Ingredient {
 
     public void setIngredient(String ingredient) {
         this.ingredient = ingredient;
+    }
+
+    // Builder
+    public abstract static class Builder {
+        public abstract Builder quantity(float quantity);
+        public abstract Builder measure(String measure);
+        public abstract Builder ingredient(String ingredient);
+
+        public abstract Ingredient build();
     }
 }

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.alanvan.bakingapp.utils.CacheHelper;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -36,4 +38,9 @@ public class AppContextModule {
         return mSharedPreferences;
     }
 
+    @Provides
+    @Singleton
+    CacheHelper provideCacheHelper() {
+        return new CacheHelper(mAppContext);
+    }
 }

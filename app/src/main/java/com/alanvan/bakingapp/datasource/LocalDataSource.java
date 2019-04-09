@@ -1,6 +1,8 @@
 package com.alanvan.bakingapp.datasource;
 
+import com.alanvan.bakingapp.model.Ingredient;
 import com.alanvan.bakingapp.model.Recipe;
+import com.alanvan.bakingapp.model.Step;
 
 import java.util.List;
 
@@ -22,6 +24,14 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public Observable<List<Recipe>> getRecipes() {
+        return null;
+    }
+
+    private Observable<List<Step>> getRecipeSteps(int recipeId) {
+        return null;
+    }
+
+    private Observable<List<Ingredient>> getRecipeIngredients(int recipeId) {
         return null;
     }
 
