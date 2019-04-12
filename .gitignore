@@ -2,7 +2,7 @@
 build/
 *.class
 *.project
-app.iml
+*.iml
 .gradle/.idea
 .idea
 
