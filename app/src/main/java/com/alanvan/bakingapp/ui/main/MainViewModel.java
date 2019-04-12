@@ -19,14 +19,19 @@ import com.alanvan.bakingapp.ui.recipe_detail.RecipeDetailActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 
 import static com.alanvan.bakingapp.Constants.RECIPE_ID;
 
 public class MainViewModel extends BaseViewModel {
 
+    @Inject
+    RecipeRepository recipeRepository;
+
     private Observable<List<Recipe>> loadDataFromRepository() {
-        RecipeRepository recipeRepository = Injector.getAppComponent().repositoryManager().getRecipeRepository();
+        Injector.getAppComponent().inject(this);
         return recipeRepository.getRecipes();
     }
 

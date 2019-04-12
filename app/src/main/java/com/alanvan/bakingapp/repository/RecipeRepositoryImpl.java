@@ -3,6 +3,7 @@ package com.alanvan.bakingapp.repository;
 import com.alanvan.bakingapp.datasource.DataSource;
 import com.alanvan.bakingapp.datasource.LocalDataSource;
 import com.alanvan.bakingapp.datasource.RemoteDataSource;
+import com.alanvan.bakingapp.injection.Injector;
 import com.alanvan.bakingapp.model.Ingredient;
 import com.alanvan.bakingapp.model.Recipe;
 import com.alanvan.bakingapp.model.Step;
@@ -21,20 +22,20 @@ public class RecipeRepositoryImpl implements RecipeRepository {
 
     private final DataSource remoteDataSource;
     private final DataSource localDataSource;
-
-    @Inject
-    CacheHelper cacheHelper;
+    private final CacheHelper cacheHelper;
 
     @Inject
     public RecipeRepositoryImpl() {
         remoteDataSource = RemoteDataSource.getInstance();
         localDataSource = LocalDataSource.getInstance();
+        cacheHelper = Injector.getContextComponent().cacheHelper();
     }
 
     @Override
     public Observable<List<Recipe>> getRecipes() {
         if (cacheHelper.isDataSynced()) {
-            return localDataSource.getRecipes();
+            //TODO: change to remoteDataSource
+            return remoteDataSource.getRecipes();
         } else {
             return remoteDataSource.getRecipes().doOnNext(recipeList -> {
                 localDataSource.saveRecipes(recipeList);

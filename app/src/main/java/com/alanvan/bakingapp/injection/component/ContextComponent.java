@@ -1,7 +1,11 @@
 package com.alanvan.bakingapp.injection.component;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.alanvan.bakingapp.injection.module.AppContextModule;
 import com.alanvan.bakingapp.repository.RecipeRepository;
+import com.alanvan.bakingapp.utils.CacheHelper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,7 +21,9 @@ import dagger.Component;
 })
 
 public interface ContextComponent {
+    Context appContext();
 
-    void inject(RecipeRepository recipeRepository);
+    SharedPreferences sharedPreferences();
 
+    CacheHelper cacheHelper();
 }
