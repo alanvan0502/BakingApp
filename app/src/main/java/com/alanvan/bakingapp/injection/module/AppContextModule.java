@@ -20,10 +20,12 @@ public class AppContextModule {
 
     Context mAppContext;
     SharedPreferences mSharedPreferences;
+    CacheHelper mCacheHelper;
 
     public AppContextModule(Context appContext) {
         mAppContext = appContext;
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        mCacheHelper = new CacheHelper(appContext);
     }
 
     @Provides
@@ -41,6 +43,6 @@ public class AppContextModule {
     @Provides
     @Singleton
     CacheHelper provideCacheHelper() {
-        return new CacheHelper(mAppContext);
+        return mCacheHelper;
     }
 }
