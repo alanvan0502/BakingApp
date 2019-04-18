@@ -4,12 +4,11 @@ import com.alanvan.bakingapp.datasource.DataSource;
 import com.alanvan.bakingapp.datasource.LocalDataSource;
 import com.alanvan.bakingapp.datasource.RemoteDataSource;
 import com.alanvan.bakingapp.injection.Injector;
-import com.alanvan.bakingapp.model.Ingredient;
 import com.alanvan.bakingapp.model.Recipe;
-import com.alanvan.bakingapp.model.Step;
 import com.alanvan.bakingapp.utils.CacheHelper;
+import com.alanvan.bakingapp.utils.RxUtils;
+import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,15 +32,23 @@ public class RecipeRepositoryImpl implements RecipeRepository {
 
     @Override
     public Observable<List<Recipe>> getRecipes() {
-        if (cacheHelper.isDataSynced()) {
-            //TODO: change to remoteDataSource
-            return remoteDataSource.getRecipes();
-        } else {
-            return remoteDataSource.getRecipes().doOnNext(recipeList -> {
-                localDataSource.saveRecipes(recipeList);
-                cacheHelper.setRecipeSynced(true);
-            });
-        }
+        return Observable.fromCallable(cacheHelper::isDataSynced).flatMap(isDataSynced -> {
+            if (isDataSynced) {
+                return localDataSource.getRecipes();
+            } else {
+                return remoteDataSource.getRecipes().doOnNext(recipeList -> {
+                    localDataSource.clearLocalData()
+                            .flatMap(d -> localDataSource.saveRecipes(recipeList))
+                            .compose(RxUtils.applyIOSchedulers())
+                            .subscribe(result -> {
+                                Logger.d("Success saving recipes");
+                            }, error -> {
+                                throw new Exception("Error saving recipes");
+                            });
+                    cacheHelper.setDataSynced(true);
+                });
+            }
+        });
     }
 
     @Override
@@ -51,6 +58,6 @@ public class RecipeRepositoryImpl implements RecipeRepository {
 
     @Override
     public void markRepoAsSynced() {
-        cacheHelper.setRecipeSynced(true);
+        cacheHelper.setDataSynced(true);
     }
 }

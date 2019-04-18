@@ -1,14 +1,9 @@
 package com.alanvan.bakingapp.datasource;
 
 import com.alanvan.bakingapp.injection.Injector;
-import com.alanvan.bakingapp.model.Ingredient;
 import com.alanvan.bakingapp.model.Recipe;
-import com.alanvan.bakingapp.model.Step;
-import com.alanvan.bakingapp.network.endpoints.RecipeEndPoint;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 import io.reactivex.Observable;
 
@@ -27,7 +22,6 @@ public class RemoteDataSource implements DataSource {
     }
 
     private RemoteDataSource() {
-
     }
 
     @Override
@@ -36,7 +30,14 @@ public class RemoteDataSource implements DataSource {
     }
 
     @Override
-    public void saveRecipes(List<Recipe> recipeList) {
-        //Not implemented
+    public Observable<Boolean> saveRecipes(List<Recipe> recipeList) {
+        // Not implemented
+        return Observable.just(true);
+    }
+
+    @Override
+    public Observable<Boolean> clearLocalData() {
+        // Not implemented
+        return Observable.just(true);
     }
 }

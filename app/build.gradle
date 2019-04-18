@@ -84,4 +84,7 @@ dependencies {
 
     //OrmLite
     implementation 'com.j256.ormlite:ormlite-android:4.48'
+
+    //Logger
+    implementation 'com.orhanobut:logger:2.2.0'
 }

@@ -1,28 +1,45 @@
 package com.alanvan.bakingapp.model;
 
+import com.alanvan.bakingapp.db.cache.CachableEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.List;
+@DatabaseTable(tableName = Ingredient.TABLE_NAME)
+public class Ingredient implements CachableEntity {
 
-public class Ingredient {
+    public static final String TABLE_NAME = "Ingredient";
+    public static final String INGREDIENT_ID = "ingredient_id";
+    public static final String COLUMN_RECIPE_ID = "recipe_id";
+    public static final String COLUMN_QUANTITY = "quantity";
+    public static final String COLUMN_MEASURE = "measure";
+    public static final String COLUMN_INGREDIENT = "ingredient";
 
-    public static final String CUP = "cup";
-    public static final String TBLSP = "table-spool";
-    public static final String TSP = "tea-spoon";
-    public static final String K = "kilogram";
-    public static final String G = "gram";
-    public static final String OZ = "ounce";
+    @DatabaseField(columnName = INGREDIENT_ID, id = true)
+    private String ingredientId;
 
+    @DatabaseField(columnName = COLUMN_RECIPE_ID)
+    private int recipeId;
+
+    @DatabaseField(columnName = COLUMN_QUANTITY)
     @SerializedName("quantity")
     @Expose
     private Double quantity;
+
+    @DatabaseField(columnName = COLUMN_MEASURE)
     @SerializedName("measure")
     @Expose
     private String measure;
+
+    @DatabaseField(columnName = COLUMN_INGREDIENT)
     @SerializedName("ingredient")
     @Expose
     private String ingredient;
+
+    public int getRecipeId() {
+        return recipeId;
+    }
 
     public Double getQuantity() {
         return quantity;
@@ -48,12 +65,15 @@ public class Ingredient {
         this.ingredient = ingredient;
     }
 
-    // Builder
-    public abstract static class Builder {
-        public abstract Builder quantity(float quantity);
-        public abstract Builder measure(String measure);
-        public abstract Builder ingredient(String ingredient);
+    public void setRecipeId(int recipeId) {
+        this.recipeId = recipeId;
+    }
 
-        public abstract Ingredient build();
+    public String getIngredientId() {
+        return ingredientId;
+    }
+
+    public void setIngredientId(String ingredientId) {
+        this.ingredientId = ingredientId;
     }
 }

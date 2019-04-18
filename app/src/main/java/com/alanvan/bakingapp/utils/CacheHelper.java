@@ -22,7 +22,7 @@ public class CacheHelper {
         return sharedPreferences.getBoolean(PREFS_SYNCED, false);
     }
 
-    public void setRecipeSynced(boolean flag) {
+    public void setDataSynced(boolean flag) {
         sharedPreferences.edit().putBoolean(PREFS_SYNCED, flag).apply();
     }
 }
