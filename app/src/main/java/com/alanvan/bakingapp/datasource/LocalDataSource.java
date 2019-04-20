@@ -51,4 +51,22 @@ public class LocalDataSource implements DataSource {
     public Observable<Boolean> clearLocalData() {
         return recipeCacheService.clearLocalData();
     }
+
+    @Override
+    public Observable<Recipe> getRecipe(int recipeId) {
+        return recipeCacheService.getRecipe(recipeId).map(recipe -> {
+            recipe.setIngredients(
+                    recipeCacheService.getIngredients(recipeId).blockingFirst()
+            );
+            recipe.setSteps(
+                    recipeCacheService.getSteps(recipeId).blockingFirst()
+            );
+            return recipe;
+        });
+    }
+
+    @Override
+    public Observable<Boolean> saveRecipe(Recipe recipe) {
+        return recipeCacheService.saveRecipe(recipe);
+    }
 }

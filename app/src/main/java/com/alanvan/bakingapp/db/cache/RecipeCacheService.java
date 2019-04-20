@@ -19,4 +19,8 @@ public interface RecipeCacheService {
     Observable<List<Step>> getSteps(int recipeId);
 
     Observable<Boolean> clearLocalData();
+
+    Observable<Boolean> saveRecipe(Recipe recipe);
+
+    Observable<Recipe> getRecipe(int recipeId);
 }

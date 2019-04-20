@@ -40,4 +40,22 @@ public class RemoteDataSource implements DataSource {
         // Not implemented
         return Observable.just(true);
     }
+
+    @Override
+    public Observable<Recipe> getRecipe(int recipeId) {
+        return getRecipes().map(recipes -> {
+            for (Recipe recipe: recipes) {
+                if (recipe.getId() == recipeId) {
+                    return recipe;
+                }
+            }
+            return new Recipe();
+        });
+    }
+
+    @Override
+    public Observable<Boolean> saveRecipe(Recipe recipe) {
+        // not implemented
+        return Observable.just(true);
+    }
 }

@@ -8,7 +8,6 @@ import com.alanvan.bakingapp.model.Ingredient;
 import com.alanvan.bakingapp.model.Recipe;
 import com.alanvan.bakingapp.model.Step;
 
-import java.sql.SQLInput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.Locale;
 
 import io.reactivex.Observable;
 
-public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCacheService  {
+public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCacheService {
 
     private static RecipeCacheServiceImpl sInstance;
 
@@ -33,30 +32,44 @@ public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCa
         return Observable.fromCallable(() -> {
             this.storeEntities(recipes);
 
-            for (Recipe recipe: recipes) {
-                List<Ingredient> ingredientEntities = new ArrayList<>();
-                List<Ingredient> ingredients = recipe.getIngredients();
-                int count = 0;
-                for (Ingredient ingredient: ingredients) {
-                    ingredient.setRecipeId(recipe.getId());
-                    ingredient.setIngredientId("ingredient_" + recipe.getId() + "_" + count);
-                    count ++;
-                    ingredientEntities.add(ingredient);
-                }
-                this.storeEntities(ingredientEntities);
-
-                List<Step> stepEntities = new ArrayList<>();
-                List<Step> steps = recipe.getSteps();
-                for (Step step: steps) {
-                    step.setRecipeId(recipe.getId());
-                    step.setStepDbId("step_" + step.getId() + "_" + recipe.getId());
-                    stepEntities.add(step);
-                }
-                this.storeEntities(stepEntities);
+            for (Recipe recipe : recipes) {
+                storeStepsAndIngredients(recipe);
             }
 
             return true;
         });
+    }
+
+    @Override
+    public Observable<Boolean> saveRecipe(Recipe recipe) {
+
+        return Observable.fromCallable(() -> {
+            this.storeEntity(recipe);
+            storeStepsAndIngredients(recipe);
+            return true;
+        });
+    }
+
+    private void storeStepsAndIngredients(Recipe recipe) {
+        List<Ingredient> ingredientEntities = new ArrayList<>();
+        List<Ingredient> ingredients = recipe.getIngredients();
+        int count = 0;
+        for (Ingredient ingredient : ingredients) {
+            ingredient.setRecipeId(recipe.getId());
+            ingredient.setIngredientId("ingredient_" + recipe.getId() + "_" + count);
+            count++;
+            ingredientEntities.add(ingredient);
+        }
+        this.storeEntities(ingredientEntities);
+
+        List<Step> stepEntities = new ArrayList<>();
+        List<Step> steps = recipe.getSteps();
+        for (Step step : steps) {
+            step.setRecipeId(recipe.getId());
+            step.setStepDbId("step_" + step.getId() + "_" + recipe.getId());
+            stepEntities.add(step);
+        }
+        this.storeEntities(stepEntities);
     }
 
     @Override
@@ -84,6 +97,37 @@ public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCa
                 }
             }
             return recipes;
+        });
+    }
+
+    @Override
+    public Observable<Recipe> getRecipe(int recipeId) {
+
+        return Observable.fromCallable(() -> {
+            Cursor cursor = null;
+            Recipe recipe = new Recipe();
+
+            String sql = String.format(
+                    "SELECT " +
+                            "r.* " +
+                            "FROM %s r " +
+                            "WHERE r.%s = %s",
+                    // FROM
+                    Recipe.TABLE_NAME,
+                    // WHERE
+                    Recipe.COLUMN_RECIPE_ID, recipeId);
+            try {
+                cursor = db.rawQuery(sql, null);
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    recipe = DbUtils.getRecipeFromCursor(cursor);
+                }
+            } finally {
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+            }
+            return recipe;
         });
     }
 
@@ -166,7 +210,7 @@ public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCa
             List<SQLiteStatement> sqlStatements
                     = getDeleteLocalDataStatement(Arrays.asList(Recipe.TABLE_NAME, Step.TABLE_NAME, Ingredient.TABLE_NAME));
 
-            for (SQLiteStatement statement: sqlStatements) {
+            for (SQLiteStatement statement : sqlStatements) {
                 statement.execute();
             }
             return true;
@@ -174,8 +218,8 @@ public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCa
     }
 
     private List<SQLiteStatement> getDeleteLocalDataStatement(List<String> tableNames) {
-        List<SQLiteStatement> result = new ArrayList< SQLiteStatement>();
-        for (String tableName: tableNames) {
+        List<SQLiteStatement> result = new ArrayList<SQLiteStatement>();
+        for (String tableName : tableNames) {
             String sql = String.format(Locale.US,
                     "DELETE FROM %s st", tableName);
             result.add(db.compileStatement(sql));

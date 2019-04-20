@@ -13,4 +13,8 @@ public interface DataSource {
     Observable<Boolean> saveRecipes(List<Recipe> recipeList);
 
     Observable<Boolean> clearLocalData();
+
+    Observable<Recipe> getRecipe(int recipeId);
+
+    Observable<Boolean> saveRecipe(Recipe recipe);
 }

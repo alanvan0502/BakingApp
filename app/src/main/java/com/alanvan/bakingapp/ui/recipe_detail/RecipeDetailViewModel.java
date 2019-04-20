@@ -40,18 +40,20 @@ public class RecipeDetailViewModel extends BaseViewModel {
                 .flatMap(recipe ->  Observable.fromCallable(() -> {
                     List<BaseEpoxyModel> models = new ArrayList<>();
 
-                    models.add(new RecipeIngredientsEpoxyModel_(fragment)
-                                    .id(RecipeDetailViewModel.class.getName() + recipe.getId() + "ingredients")
-                                    .recipeDetailsIngredients(loadIngredients(context, recipe)));
+                    if (context != null) {
+                        models.add(new RecipeIngredientsEpoxyModel_(fragment)
+                                .id(RecipeDetailViewModel.class.getName() + recipe.getId() + "ingredients")
+                                .recipeDetailsIngredients(loadIngredients(context, recipe)));
 
-                    List<Step> steps = recipe.getSteps();
-                    for (Step step: steps) {
-                        models.add(new RecipeDetailItemEpoxyModel_(fragment)
-                                .id(RecipeDetailViewModel.class.getName() + recipe.getId() + step.getId())
-                                .stepShortDescription(step.getShortDescription())
-                                .recipeDetailItemClick(v -> {
+                        List<Step> steps = recipe.getSteps();
+                        for (Step step: steps) {
+                            models.add(new RecipeDetailItemEpoxyModel_(fragment)
+                                    .id(RecipeDetailViewModel.class.getName() + recipe.getId() + step.getId())
+                                    .stepShortDescription(step.getShortDescription())
+                                    .recipeDetailItemClick(v -> {
 
-                                }));
+                                    }));
+                        }
                     }
                     return models;
                 }));

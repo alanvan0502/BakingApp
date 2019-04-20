@@ -52,6 +52,24 @@ public class RecipeRepositoryImpl implements RecipeRepository {
     }
 
     @Override
+    public Observable<Recipe> getRecipe(int recipeId) {
+        return Observable.fromCallable(cacheHelper::isDataSynced).flatMap(isDataSynced -> {
+            if (isDataSynced) {
+                return localDataSource.getRecipe(recipeId);
+            } else {
+                return remoteDataSource.getRecipe(recipeId).doOnNext(recipe -> {
+                    localDataSource.saveRecipe(recipe).compose(RxUtils.applyIOSchedulers())
+                            .subscribe(result -> {
+                                Logger.d("Success saving recipe");
+                            }, error -> {
+                                throw new Exception("Error saving recipe");
+                            });
+                });
+            }
+        });
+    }
+
+    @Override
     public void saveRecipes(List<Recipe> recipeList) {
         localDataSource.saveRecipes(recipeList);
     }
