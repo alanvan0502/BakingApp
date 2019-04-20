@@ -1,6 +1,8 @@
 package com.alanvan.bakingapp.ui.recipe_detail;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import com.alanvan.bakingapp.BaseFragment;
 import com.alanvan.bakingapp.BaseViewModel;
@@ -13,24 +15,22 @@ import com.alanvan.bakingapp.repository.RecipeRepository;
 import com.alanvan.bakingapp.ui.epoxy.BaseEpoxyModel;
 import com.alanvan.bakingapp.ui.epoxy.RecipeDetailItemEpoxyModel_;
 import com.alanvan.bakingapp.ui.epoxy.RecipeIngredientsEpoxyModel_;
+import com.alanvan.bakingapp.ui.step_detail.StepDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
 
+import static com.alanvan.bakingapp.Constants.RECIPE_ID;
+import static com.alanvan.bakingapp.Constants.RECIPE_NAME;
+import static com.alanvan.bakingapp.Constants.STEP_ID;
+
 public class RecipeDetailViewModel extends BaseViewModel {
 
     private Observable<Recipe> loadDataFromRepository(int recipeId) {
         RecipeRepository recipeRepository = Injector.getAppComponent().repositoryManager().getRecipeRepository();
-        return recipeRepository.getRecipes().map(recipeList -> {
-            for (Recipe recipe: recipeList) {
-                if (recipe.getId() == recipeId) {
-                    return recipe;
-                }
-            }
-            return new Recipe();
-        });
+        return recipeRepository.getRecipe(recipeId);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class RecipeDetailViewModel extends BaseViewModel {
 
                     if (context != null) {
                         models.add(new RecipeIngredientsEpoxyModel_(fragment)
-                                .id(RecipeDetailViewModel.class.getName() + recipe.getId() + "ingredients")
+                                .id(RecipeDetailViewModel.class.getSimpleName() + recipe.getId() + "ingredients")
                                 .recipeDetailsIngredients(loadIngredients(context, recipe)));
 
                         List<Step> steps = recipe.getSteps();
@@ -51,7 +51,17 @@ public class RecipeDetailViewModel extends BaseViewModel {
                                     .id(RecipeDetailViewModel.class.getName() + recipe.getId() + step.getId())
                                     .stepShortDescription(step.getShortDescription())
                                     .recipeDetailItemClick(v -> {
+                                        Activity activty = fragment.getActivity();
 
+                                        Intent intent = new Intent(activty, StepDetailActivity.class);
+
+                                        intent.putExtra(RECIPE_ID, recipe.getId());
+                                        intent.putExtra(STEP_ID, step.getId());
+                                        intent.putExtra(RECIPE_NAME, recipe.getName());
+
+                                        if (activty != null) {
+                                            activty.startActivity(intent);
+                                        }
                                     }));
                         }
                     }
@@ -68,7 +78,7 @@ public class RecipeDetailViewModel extends BaseViewModel {
         sb.append(context.getString(R.string.ingredient_list_header));
         sb.append("\n");
 
-        for (Ingredient ingredient: ingredients) {
+        for (Ingredient ingredient : ingredients) {
 
             String ingredientString = ingredient.getIngredient();
             String ingredientCap = ingredientString.substring(0, 1).toUpperCase() + ingredientString.substring(1);

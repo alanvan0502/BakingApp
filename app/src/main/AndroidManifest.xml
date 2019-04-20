@@ -13,19 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".ui.step_detail.StepDetail"
+        <activity android:name=".ui.step_detail.StepDetailActivity"
             android:parentActivityName=".ui.recipe_detail.RecipeDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.step_detail.StepDetail"/>
+                android:value=".ui.recipe_detail.RecipeDetailActivity" />
         </activity>
         <activity
             android:name=".ui.recipe_detail.RecipeDetailActivity"
             android:parentActivityName=".ui.main.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.main.MainActivity"/>
+                android:value=".ui.main.MainActivity" />
         </activity>
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>

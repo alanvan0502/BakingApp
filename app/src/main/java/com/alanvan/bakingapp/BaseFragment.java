@@ -16,13 +16,14 @@ public abstract class BaseFragment extends RxFragment {
 
     private BaseViewModel viewModel;
 
+    private List<BaseEpoxyModel> models = new ArrayList<>();
+
     private EpoxyController controller = new EpoxyController();
 
     @SuppressLint("CheckResult")
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        List<BaseEpoxyModel> models = new ArrayList<>();
 
         viewModel.setupView(this).compose(
                 RxUtils.applyIOSchedulers()

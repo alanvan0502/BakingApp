@@ -107,7 +107,7 @@ public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCa
             Cursor cursor = null;
             Recipe recipe = new Recipe();
 
-            String sql = String.format(
+            String sql = String.format(Locale.US,
                     "SELECT " +
                             "r.* " +
                             "FROM %s r " +
@@ -116,11 +116,13 @@ public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCa
                     Recipe.TABLE_NAME,
                     // WHERE
                     Recipe.COLUMN_RECIPE_ID, recipeId);
+
             try {
                 cursor = db.rawQuery(sql, null);
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
                     recipe = DbUtils.getRecipeFromCursor(cursor);
+                    cursor.moveToNext();
                 }
             } finally {
                 if (cursor != null && !cursor.isClosed()) {

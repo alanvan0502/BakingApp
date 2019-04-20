@@ -20,6 +20,7 @@ import java.util.List;
 import io.reactivex.Observable;
 
 import static com.alanvan.bakingapp.Constants.RECIPE_ID;
+import static com.alanvan.bakingapp.Constants.RECIPE_NAME;
 
 public class MainViewModel extends BaseViewModel {
 
@@ -38,22 +39,24 @@ public class MainViewModel extends BaseViewModel {
                     List<BaseEpoxyModel> models = new ArrayList<>();
 
                     for (Recipe recipe : recipeList) {
-                        assert context != null;
-                        models.add(new MainItemEpoxyModel_(fragment)
-                                .id(MainViewModel.class.getName() + recipe.getId())
-                                .mainRecipeName(recipe.getName())
-                                .mainRecipeServings(context.getString(R.string.servings) + " " + recipe.getServings().toString())
-                                .mainItemClick(v -> {
-                                    Activity activity = fragment.getActivity();
+                        if (context != null) {
+                            models.add(new MainItemEpoxyModel_(fragment)
+                                    .id(MainViewModel.class.getSimpleName() + recipe.getId())
+                                    .mainRecipeName(recipe.getName())
+                                    .mainRecipeServings(context.getString(R.string.servings) + " " + recipe.getServings().toString())
+                                    .mainItemClick(v -> {
+                                        Activity activity = fragment.getActivity();
 
-                                    Intent intent = new Intent(activity, RecipeDetailActivity.class);
+                                        Intent intent = new Intent(activity, RecipeDetailActivity.class);
 
-                                    intent.putExtra(RECIPE_ID, recipe.getId());
+                                        intent.putExtra(RECIPE_ID, recipe.getId());
+                                        intent.putExtra(RECIPE_NAME, recipe.getName());
 
-                                    if (activity != null) {
-                                        activity.startActivity(intent);
-                                    }
-                                }));
+                                        if (activity != null) {
+                                            activity.startActivity(intent);
+                                        }
+                                    }));
+                        }
                     }
                     return models;
                 }));

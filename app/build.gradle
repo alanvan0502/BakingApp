@@ -87,4 +87,7 @@ dependencies {
 
     //Logger
     implementation 'com.orhanobut:logger:2.2.0'
+
+    //ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.9.6'
 }

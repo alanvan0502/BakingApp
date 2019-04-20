@@ -51,7 +51,7 @@ public class DbUtils {
 
         step.setThumbnailURL(cursor.getString(cursor.getColumnIndex(Step.COLUMN_THUMBNAIL_URL)));
 
-        step.setVideoURL(cursor.getString(cursor.getColumnIndex(Step.COLUMN_THUMBNAIL_URL)));
+        step.setVideoURL(cursor.getString(cursor.getColumnIndex(Step.COLUMN_VIDEO_URL)));
 
         return step;
     }

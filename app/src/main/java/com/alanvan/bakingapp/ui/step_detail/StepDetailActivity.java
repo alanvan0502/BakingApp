@@ -1,4 +1,4 @@
-package com.alanvan.bakingapp.ui.recipe_detail;
+package com.alanvan.bakingapp.ui.step_detail;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,18 +8,20 @@ import com.alanvan.bakingapp.R;
 
 import static com.alanvan.bakingapp.Constants.RECIPE_ID;
 import static com.alanvan.bakingapp.Constants.RECIPE_NAME;
+import static com.alanvan.bakingapp.Constants.STEP_ID;
 
-public class RecipeDetailActivity extends BaseActivity {
+public class StepDetailActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe_detail);
+        setContentView(R.layout.activity_step_detail);
 
-        RecipeDetailFragment fragment = RecipeDetailFragment.getInstance();
+        StepDetailFragment fragment = StepDetailFragment.getInstance();
 
         Intent intent = getIntent();
         if (intent != null) {
+            fragment.setStepId(intent.getIntExtra(STEP_ID, -1));
             fragment.setRecipeId(intent.getIntExtra(RECIPE_ID, -1));
 
             String recipeName = intent.getStringExtra(RECIPE_NAME);
@@ -30,6 +32,6 @@ public class RecipeDetailActivity extends BaseActivity {
             }
         }
 
-        replaceFragment(fragment, R.id.fragment_recipe_detail, RecipeDetailFragment.class.getName());
+        replaceFragment(fragment, R.id.fragment_step_detail, StepDetailFragment.class.getName());
     }
 }

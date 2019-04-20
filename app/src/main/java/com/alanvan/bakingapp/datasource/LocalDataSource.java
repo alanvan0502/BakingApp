@@ -3,6 +3,7 @@ package com.alanvan.bakingapp.datasource;
 import com.alanvan.bakingapp.db.cache.CacheServiceManager;
 import com.alanvan.bakingapp.db.cache.RecipeCacheService;
 import com.alanvan.bakingapp.model.Recipe;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class LocalDataSource implements DataSource {
     @Override
     public Observable<Recipe> getRecipe(int recipeId) {
         return recipeCacheService.getRecipe(recipeId).map(recipe -> {
+            Logger.d("RECIPE_RETURNED" + recipe.getId());
             recipe.setIngredients(
                     recipeCacheService.getIngredients(recipeId).blockingFirst()
             );

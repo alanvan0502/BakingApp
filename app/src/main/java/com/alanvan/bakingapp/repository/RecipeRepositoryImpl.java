@@ -57,14 +57,14 @@ public class RecipeRepositoryImpl implements RecipeRepository {
             if (isDataSynced) {
                 return localDataSource.getRecipe(recipeId);
             } else {
-                return remoteDataSource.getRecipe(recipeId).doOnNext(recipe -> {
-                    localDataSource.saveRecipe(recipe).compose(RxUtils.applyIOSchedulers())
-                            .subscribe(result -> {
-                                Logger.d("Success saving recipe");
-                            }, error -> {
-                                throw new Exception("Error saving recipe");
-                            });
-                });
+                return remoteDataSource.getRecipe(recipeId)
+                        .doOnNext(recipe
+                        -> localDataSource.saveRecipe(recipe).compose(RxUtils.applyIOSchedulers())
+                        .subscribe(result -> {
+                            Logger.d("Success saving recipe");
+                        }, error -> {
+                            throw new Exception("Error saving recipe");
+                        }));
             }
         });
     }

@@ -10,4 +10,5 @@ public abstract class BaseEpoxyModel extends DataBindingEpoxyModel {
     public BaseEpoxyModel(BaseFragment fragment) {
         this.fragment = fragment;
     }
+
 }
