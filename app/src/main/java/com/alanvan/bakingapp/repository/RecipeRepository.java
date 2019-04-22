@@ -1,6 +1,7 @@
 package com.alanvan.bakingapp.repository;
 
 import com.alanvan.bakingapp.model.Recipe;
+import com.alanvan.bakingapp.model.Step;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface RecipeRepository {
 
     Observable<Recipe> getRecipe(int recipeId);
 
-    void saveRecipes(List<Recipe> recipeList);
+    Observable<Step> getStep(int recipeId, int stepId);
 
-    void markRepoAsSynced();
+    Observable<Integer> getLastStepId(int recipeId);
 }

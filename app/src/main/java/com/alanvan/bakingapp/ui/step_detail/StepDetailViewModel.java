@@ -39,18 +39,11 @@ public class StepDetailViewModel extends ViewModel implements ExoPlayer.EventLis
 
     private MediaSessionCompat mediaSession;
     private ExoPlayer player;
+    private RecipeRepository recipeRepository = Injector.getAppComponent().repositoryManager().getRecipeRepository();
 
     public Observable<Uri> loadVideoUri(int recipeId, int stepId) {
-        RecipeRepository recipeRepository = Injector.getAppComponent().repositoryManager().getRecipeRepository();
 
-        return recipeRepository.getRecipe(recipeId).map(recipe -> {
-            Step step = new Step();
-            List<Step> steps = recipe.getSteps();
-            for (Step s : steps) {
-                if (s.getId() == stepId) {
-                    step = s;
-                }
-            }
+        return recipeRepository.getStep(recipeId, stepId).map(step -> {
             if (!step.getVideoURL().isEmpty()) {
                 return step.getVideoURL();
             } else if (!step.getThumbnailURL().isEmpty()) {
@@ -59,6 +52,14 @@ public class StepDetailViewModel extends ViewModel implements ExoPlayer.EventLis
                 return "";
             }
         }).map(Uri::parse);
+    }
+
+    public Observable<String> loadStepInstruction(int recipeId, int stepId) {
+        return recipeRepository.getStep(recipeId, stepId).map(Step::getDescription);
+    }
+
+    public Observable<Integer> getLastStepId(int recipeId) {
+        return recipeRepository.getLastStepId(recipeId);
     }
 
     public void initializePlayer(Uri videoUri, PlayerView playerView) {

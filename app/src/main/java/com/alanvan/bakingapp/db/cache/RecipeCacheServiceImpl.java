@@ -223,7 +223,7 @@ public class RecipeCacheServiceImpl extends CacheServiceImpl implements RecipeCa
         List<SQLiteStatement> result = new ArrayList<SQLiteStatement>();
         for (String tableName : tableNames) {
             String sql = String.format(Locale.US,
-                    "DELETE FROM %s st", tableName);
+                    "DELETE FROM %s", tableName);
             result.add(db.compileStatement(sql));
         }
         return result;

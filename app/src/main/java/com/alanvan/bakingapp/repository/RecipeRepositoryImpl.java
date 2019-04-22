@@ -5,6 +5,7 @@ import com.alanvan.bakingapp.datasource.LocalDataSource;
 import com.alanvan.bakingapp.datasource.RemoteDataSource;
 import com.alanvan.bakingapp.injection.Injector;
 import com.alanvan.bakingapp.model.Recipe;
+import com.alanvan.bakingapp.model.Step;
 import com.alanvan.bakingapp.utils.CacheHelper;
 import com.alanvan.bakingapp.utils.RxUtils;
 import com.orhanobut.logger.Logger;
@@ -42,10 +43,10 @@ public class RecipeRepositoryImpl implements RecipeRepository {
                             .compose(RxUtils.applyIOSchedulers())
                             .subscribe(result -> {
                                 Logger.d("Success saving recipes");
+                                cacheHelper.setDataSynced(true);
                             }, error -> {
                                 throw new Exception("Error saving recipes");
                             });
-                    cacheHelper.setDataSynced(true);
                 });
             }
         });
@@ -70,12 +71,21 @@ public class RecipeRepositoryImpl implements RecipeRepository {
     }
 
     @Override
-    public void saveRecipes(List<Recipe> recipeList) {
-        localDataSource.saveRecipes(recipeList);
+    public Observable<Step> getStep(int recipeId, int stepId) {
+        return getRecipe(recipeId).map(recipe -> {
+            Step step = new Step();
+            List<Step> steps = recipe.getSteps();
+            for (Step s : steps) {
+                if (s.getId() == stepId) {
+                    step = s;
+                }
+            }
+            return step;
+        });
     }
 
     @Override
-    public void markRepoAsSynced() {
-        cacheHelper.setDataSynced(true);
+    public Observable<Integer> getLastStepId(int recipeId) {
+        return getRecipe(recipeId).map(recipe -> recipe.getSteps().size() - 1);
     }
 }
