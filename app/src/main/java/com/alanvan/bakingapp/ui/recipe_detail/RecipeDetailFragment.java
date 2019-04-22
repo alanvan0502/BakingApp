@@ -20,6 +20,7 @@ import com.alanvan.bakingapp.utils.RxUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +28,8 @@ import java.util.List;
 public class RecipeDetailFragment extends BaseFragment {
 
     private int recipeId;
+
+    private boolean isTwoPane = false;
 
     public RecipeDetailFragment() {
         // Required empty public constructor

@@ -19,6 +19,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.alanvan.bakingapp.Constants.RECIPE_ID;
 import static com.alanvan.bakingapp.Constants.RECIPE_NAME;
 

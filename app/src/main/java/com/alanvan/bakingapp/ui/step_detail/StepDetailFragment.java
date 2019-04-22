@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import android.widget.TextView;
 import com.alanvan.bakingapp.R;
 import com.alanvan.bakingapp.RxFragment;
 import com.alanvan.bakingapp.databinding.FragmentStepDetailBinding;
+import com.alanvan.bakingapp.ui.recipe_detail.RecipeDetailActivity;
 import com.alanvan.bakingapp.utils.RxUtils;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.orhanobut.logger.Logger;
@@ -27,14 +27,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
-import static com.alanvan.bakingapp.Constants.RECIPE_ID;
-import static com.alanvan.bakingapp.Constants.STEP_ID;
 
 public class StepDetailFragment extends RxFragment {
-
-    private int stepId;
-
-    private int recipeId;
 
     private StepDetailViewModel viewModel;
 
@@ -42,9 +36,9 @@ public class StepDetailFragment extends RxFragment {
     private TextView stepDescription;
     private ImageButton nextStep;
     private ImageButton previousStep;
-    private LinearLayout container;
 
     private int lastStepId = 0;
+    private boolean isTwoPane = false;
 
     private CompositeDisposable bag = new CompositeDisposable();
 
@@ -71,7 +65,6 @@ public class StepDetailFragment extends RxFragment {
         binding.setStepDetailViewModel(viewModel);
         this.playerView = binding.playerView;
         this.stepDescription = binding.stepDescription;
-        this.container = binding.container;
 
         this.nextStep = binding.nextStep;
         this.previousStep = binding.previousStep;
@@ -88,26 +81,32 @@ public class StepDetailFragment extends RxFragment {
             orientation = this.getActivity().getResources().getConfiguration().orientation;
         }
 
-        if (orientation == ORIENTATION_PORTRAIT) {
-            loadVideo(recipeId, stepId);
+        if (this.getActivity() instanceof RecipeDetailActivity) {
+            isTwoPane = ((RecipeDetailActivity) this.getActivity()).isTwoPane();
+        }
 
-            loadStepInstruction(recipeId, stepId);
+        if (orientation == ORIENTATION_PORTRAIT || isTwoPane) {
+            loadVideo();
 
-            Disposable d = viewModel.getLastStepId(recipeId)
+            loadStepInstruction();
+
+            Disposable d = viewModel.getLastStepId()
                     .compose(bindToLifecycle())
                     .compose(RxUtils.applyIOSchedulers())
                     .subscribe(lastStepId -> {
-                        this.lastStepId = lastStepId;
-                        if (stepId < lastStepId) {
-                            this.nextStep.setVisibility(View.VISIBLE);
-                        } else {
-                            this.nextStep.setVisibility(View.GONE);
-                        }
+                        if (!isTwoPane) {
+                            this.lastStepId = lastStepId;
+                            if (viewModel.getStepId() < lastStepId) {
+                                this.nextStep.setVisibility(View.VISIBLE);
+                            } else {
+                                this.nextStep.setVisibility(View.GONE);
+                            }
 
-                        if (stepId > 0) {
-                            this.previousStep.setVisibility(View.VISIBLE);
-                        } else {
-                            this.previousStep.setVisibility(View.GONE);
+                            if (viewModel.getStepId() > 0) {
+                                this.previousStep.setVisibility(View.VISIBLE);
+                            } else {
+                                this.previousStep.setVisibility(View.GONE);
+                            }
                         }
                     });
 
@@ -115,7 +114,7 @@ public class StepDetailFragment extends RxFragment {
 
         } else {
             setFullScreenMode();
-            loadVideo(recipeId, stepId);
+            loadVideo();
         }
     }
 
@@ -147,12 +146,14 @@ public class StepDetailFragment extends RxFragment {
     public void onResume() {
         super.onResume();
 
-        this.previousStep.setOnClickListener(c -> {
+        int stepId = viewModel.getStepId();
+        int recipeId = viewModel.getRecipeId();
 
+        this.previousStep.setOnClickListener(c -> {
             if (stepId > 0) {
                 StepDetailFragment fragment = StepDetailFragment.getInstance();
-                fragment.stepId = stepId - 1;
-                fragment.recipeId = recipeId;
+                viewModel.setStepId(stepId - 1);
+                viewModel.setRecipeId(recipeId - 1);
                 StepDetailActivity activity = (StepDetailActivity) this.getActivity();
                 if (activity != null) {
                     activity.replaceFragment(fragment, R.id.fragment_step_detail, StepDetailFragment.class.getName());
@@ -165,8 +166,7 @@ public class StepDetailFragment extends RxFragment {
 
             if (stepId < lastStepId) {
                 StepDetailFragment fragment = StepDetailFragment.getInstance();
-                fragment.stepId = stepId + 1;
-                fragment.recipeId = recipeId;
+                viewModel.setStepId(stepId + 1);
                 StepDetailActivity activity = (StepDetailActivity) this.getActivity();
                 if (activity != null) {
                     activity.replaceFragment(fragment, R.id.fragment_step_detail, StepDetailFragment.class.getName());
@@ -187,8 +187,8 @@ public class StepDetailFragment extends RxFragment {
         bag.clear();
     }
 
-    private void loadStepInstruction(int recipeId, int stepId) {
-        Disposable d = viewModel.loadStepInstruction(recipeId, stepId)
+    private void loadStepInstruction() {
+        Disposable d = viewModel.loadStepInstruction()
                 .compose(RxUtils.applyIOSchedulers())
                 .compose(bindToLifecycle())
                 .subscribe(
@@ -201,8 +201,8 @@ public class StepDetailFragment extends RxFragment {
         bag.add(d);
     }
 
-    private void loadVideo(int recipeId, int stepId) {
-        Disposable d = viewModel.loadVideoUri(recipeId, stepId)
+    private void loadVideo() {
+        Disposable d = viewModel.loadVideoUri()
                 .compose(RxUtils.applyIOSchedulers())
                 .compose(bindToLifecycle())
                 .subscribe(
@@ -214,15 +214,7 @@ public class StepDetailFragment extends RxFragment {
         bag.add(d);
     }
 
-    public void setStepId(int stepId) {
-        this.stepId = stepId;
-    }
-
-    public int getRecipeId() {
-        return recipeId;
-    }
-
-    public void setRecipeId(int recipeId) {
-        this.recipeId = recipeId;
+    public void setTwoPane(boolean twoPane) {
+        isTwoPane = twoPane;
     }
 }

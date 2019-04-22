@@ -26,8 +26,7 @@
             android:paddingStart="@dimen/material_baseline_grid_1x"
             android:paddingEnd="@dimen/material_baseline_grid_1x"
             android:paddingTop="@dimen/material_baseline_grid_1.5x"
-            android:paddingBottom="@dimen/material_baseline_grid_1.5x"
->
+            android:paddingBottom="@dimen/material_baseline_grid_1.5x">
 
             <TextView
                 android:id="@+id/step_short_description"

@@ -1,6 +1,6 @@
 package com.alanvan.bakingapp.ui.recipe_detail;
 
-import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 
@@ -16,6 +16,8 @@ import com.alanvan.bakingapp.ui.epoxy.BaseEpoxyModel;
 import com.alanvan.bakingapp.ui.epoxy.RecipeDetailItemEpoxyModel_;
 import com.alanvan.bakingapp.ui.epoxy.RecipeIngredientsEpoxyModel_;
 import com.alanvan.bakingapp.ui.step_detail.StepDetailActivity;
+import com.alanvan.bakingapp.ui.step_detail.StepDetailFragment;
+import com.alanvan.bakingapp.ui.step_detail.StepDetailViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +39,7 @@ public class RecipeDetailViewModel extends BaseViewModel {
     public Observable<List<BaseEpoxyModel>> setupView(BaseFragment fragment) {
         Context context = fragment.getContext();
         return loadDataFromRepository(((RecipeDetailFragment) fragment).getRecipeId())
-                .flatMap(recipe ->  Observable.fromCallable(() -> {
+                .flatMap(recipe -> Observable.fromCallable(() -> {
                     List<BaseEpoxyModel> models = new ArrayList<>();
 
                     if (context != null) {
@@ -46,21 +48,30 @@ public class RecipeDetailViewModel extends BaseViewModel {
                                 .recipeDetailsIngredients(loadIngredients(context, recipe)));
 
                         List<Step> steps = recipe.getSteps();
-                        for (Step step: steps) {
+                        for (Step step : steps) {
                             models.add(new RecipeDetailItemEpoxyModel_(fragment)
                                     .id(RecipeDetailViewModel.class.getName() + recipe.getId() + step.getId())
                                     .stepShortDescription(step.getShortDescription())
                                     .recipeDetailItemClick(v -> {
-                                        Activity activty = fragment.getActivity();
+                                        RecipeDetailActivity activity = (RecipeDetailActivity) fragment.getActivity();
 
-                                        Intent intent = new Intent(activty, StepDetailActivity.class);
+                                        if (activity != null) {
+                                            if (!activity.isTwoPane()) {
+                                                Intent intent = new Intent(activity, StepDetailActivity.class);
 
-                                        intent.putExtra(RECIPE_ID, recipe.getId());
-                                        intent.putExtra(STEP_ID, step.getId());
-                                        intent.putExtra(RECIPE_NAME, recipe.getName());
+                                                intent.putExtra(RECIPE_ID, recipe.getId());
+                                                intent.putExtra(STEP_ID, step.getId());
+                                                intent.putExtra(RECIPE_NAME, recipe.getName());
 
-                                        if (activty != null) {
-                                            activty.startActivity(intent);
+                                                activity.startActivity(intent);
+                                            } else {
+                                                StepDetailViewModel viewModel = ViewModelProviders.of(activity).get(StepDetailViewModel.class);
+                                                viewModel.setStepId(step.getId());
+
+                                                StepDetailFragment stepDetailFragment = StepDetailFragment.getInstance();
+                                                stepDetailFragment.setTwoPane(activity.isTwoPane());
+                                                activity.replaceFragment(stepDetailFragment, R.id.fragment_step_detail, StepDetailFragment.class.getName());
+                                            }
                                         }
                                     }));
                         }

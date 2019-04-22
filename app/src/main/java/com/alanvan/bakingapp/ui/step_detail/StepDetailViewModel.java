@@ -37,11 +37,14 @@ public class StepDetailViewModel extends ViewModel implements ExoPlayer.EventLis
     @SuppressLint("StaticFieldLeak")
     private Context appContext = Injector.getContextComponent().appContext();
 
+    private int stepId = -1;
+    private int recipeId = -1;
+
     private MediaSessionCompat mediaSession;
     private ExoPlayer player;
     private RecipeRepository recipeRepository = Injector.getAppComponent().repositoryManager().getRecipeRepository();
 
-    public Observable<Uri> loadVideoUri(int recipeId, int stepId) {
+    public Observable<Uri> loadVideoUri() {
 
         return recipeRepository.getStep(recipeId, stepId).map(step -> {
             if (!step.getVideoURL().isEmpty()) {
@@ -54,11 +57,11 @@ public class StepDetailViewModel extends ViewModel implements ExoPlayer.EventLis
         }).map(Uri::parse);
     }
 
-    public Observable<String> loadStepInstruction(int recipeId, int stepId) {
+    public Observable<String> loadStepInstruction() {
         return recipeRepository.getStep(recipeId, stepId).map(Step::getDescription);
     }
 
-    public Observable<Integer> getLastStepId(int recipeId) {
+    public Observable<Integer> getLastStepId() {
         return recipeRepository.getLastStepId(recipeId);
     }
 
@@ -133,5 +136,21 @@ public class StepDetailViewModel extends ViewModel implements ExoPlayer.EventLis
         if (mediaSession != null) {
             mediaSession.setActive(false);
         }
+    }
+
+    public int getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(int stepId) {
+        this.stepId = stepId;
+    }
+
+    public int getRecipeId() {
+        return recipeId;
+    }
+
+    public void setRecipeId(int recipeId) {
+        this.recipeId = recipeId;
     }
 }

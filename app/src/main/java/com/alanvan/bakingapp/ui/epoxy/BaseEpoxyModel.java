@@ -11,4 +11,9 @@ public abstract class BaseEpoxyModel extends DataBindingEpoxyModel {
         this.fragment = fragment;
     }
 
+    @Override
+    public boolean shouldSaveViewState() {
+        return true;
+    }
+
 }
