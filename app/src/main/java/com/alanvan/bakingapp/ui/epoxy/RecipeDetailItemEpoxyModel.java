@@ -1,7 +1,9 @@
 package com.alanvan.bakingapp.ui.epoxy;
 
 import android.databinding.ViewDataBinding;
+import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyModelClass;

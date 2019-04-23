@@ -2,7 +2,6 @@ package com.alanvan.bakingapp.ui.recipe_detail;
 
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,12 +14,6 @@ import android.view.ViewGroup;
 import com.alanvan.bakingapp.BaseFragment;
 import com.alanvan.bakingapp.R;
 import com.alanvan.bakingapp.databinding.FragmentRecipeDetailBinding;
-import com.alanvan.bakingapp.ui.epoxy.BaseEpoxyModel;
-import com.alanvan.bakingapp.utils.RxUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,8 +35,8 @@ public class RecipeDetailFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setViewModel(ViewModelProviders.of(this)
-                .get(RecipeDetailViewModel.class));
+        RecipeDetailViewModel viewModel = ViewModelProviders.of(this).get(RecipeDetailViewModel.class);
+        this.setViewModel(viewModel);
     }
 
     @Override
@@ -52,6 +45,7 @@ public class RecipeDetailFragment extends BaseFragment {
         FragmentRecipeDetailBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_recipe_detail, container, false);
         binding.recyclerView.setControllerAndBuildModels(this.getController());
+
         return binding.getRoot();
     }
 

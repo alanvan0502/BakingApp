@@ -1,8 +1,10 @@
 package com.alanvan.bakingapp.ui.recipe_detail;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 
 import com.alanvan.bakingapp.BaseFragment;
 import com.alanvan.bakingapp.BaseViewModel;
@@ -30,6 +32,9 @@ import static com.alanvan.bakingapp.Constants.STEP_ID;
 
 public class RecipeDetailViewModel extends BaseViewModel {
 
+    private MutableLiveData<View> selectedStep = new MutableLiveData<>();
+    private Integer selectedStepId = 0;
+
     private Observable<Recipe> loadDataFromRepository(int recipeId) {
         RecipeRepository recipeRepository = Injector.getAppComponent().repositoryManager().getRecipeRepository();
         return recipeRepository.getRecipe(recipeId);
@@ -38,6 +43,7 @@ public class RecipeDetailViewModel extends BaseViewModel {
     @Override
     public Observable<List<BaseEpoxyModel>> setupView(BaseFragment fragment) {
         Context context = fragment.getContext();
+
         return loadDataFromRepository(((RecipeDetailFragment) fragment).getRecipeId())
                 .flatMap(recipe -> Observable.fromCallable(() -> {
                     List<BaseEpoxyModel> models = new ArrayList<>();
@@ -48,14 +54,20 @@ public class RecipeDetailViewModel extends BaseViewModel {
                                 .recipeDetailsIngredients(loadIngredients(context, recipe)));
 
                         List<Step> steps = recipe.getSteps();
-                        for (Step step : steps) {
-                            models.add(new RecipeDetailItemEpoxyModel_(fragment)
-                                    .id(RecipeDetailViewModel.class.getName() + recipe.getId() + step.getId())
-                                    .stepShortDescription(step.getShortDescription())
-                                    .recipeDetailItemClick(v -> {
-                                        RecipeDetailActivity activity = (RecipeDetailActivity) fragment.getActivity();
+                        RecipeDetailActivity activity = (RecipeDetailActivity) fragment.getActivity();
 
-                                        if (activity != null) {
+                        if (activity != null) {
+
+                            for (Step step : steps) {
+
+                                StepDetailFragment stepDetailFragment = StepDetailFragment.getInstance();
+                                stepDetailFragment.setTwoPane(activity.isTwoPane());
+
+                                RecipeDetailItemEpoxyModel_ stepHolder = new RecipeDetailItemEpoxyModel_(fragment)
+                                        .id(RecipeDetailViewModel.class.getName() + recipe.getId() + step.getId())
+                                        .stepShortDescription(step.getShortDescription())
+                                        .recipeDetailItemClick(v -> {
+
                                             if (!activity.isTwoPane()) {
                                                 Intent intent = new Intent(activity, StepDetailActivity.class);
 
@@ -65,15 +77,30 @@ public class RecipeDetailViewModel extends BaseViewModel {
 
                                                 activity.startActivity(intent);
                                             } else {
-                                                StepDetailViewModel viewModel = ViewModelProviders.of(activity).get(StepDetailViewModel.class);
+                                                StepDetailViewModel viewModel
+                                                        = ViewModelProviders.of(activity).get(StepDetailViewModel.class);
                                                 viewModel.setStepId(step.getId());
+                                                activity.replaceFragment(stepDetailFragment,
+                                                        R.id.fragment_step_detail, StepDetailFragment.class.getName());
 
-                                                StepDetailFragment stepDetailFragment = StepDetailFragment.getInstance();
-                                                stepDetailFragment.setTwoPane(activity.isTwoPane());
-                                                activity.replaceFragment(stepDetailFragment, R.id.fragment_step_detail, StepDetailFragment.class.getName());
+                                                if (selectedStep.getValue() != null) {
+                                                    selectedStep.getValue().setSelected(false);
+                                                }
+                                                v.setSelected(true);
+                                                selectedStep.postValue(v);
+                                                selectedStepId = step.getId();
                                             }
-                                        }
-                                    }));
+                                        });
+
+//                                if (activity.isTwoPane() && step.getId().equals(selectedStepId)) {
+//                                    selectedStep.postValue(stepHolder.recipeDetailItemBinding.stepView);
+//                                    stepHolder.recipeDetailItemBinding.stepView.setSelected(true);
+//                                } else {
+//                                    stepHolder.recipeDetailItemBinding.stepView.setSelected(false);
+//                                }
+
+                                models.add(stepHolder);
+                            }
                         }
                     }
                     return models;
@@ -92,7 +119,8 @@ public class RecipeDetailViewModel extends BaseViewModel {
         for (Ingredient ingredient : ingredients) {
 
             String ingredientString = ingredient.getIngredient();
-            String ingredientCap = ingredientString.substring(0, 1).toUpperCase() + ingredientString.substring(1);
+            String ingredientCap = ingredientString.substring(0, 1).toUpperCase()
+                    + ingredientString.substring(1);
 
             sb.append("\u2022 ")
                     .append(ingredientCap)
