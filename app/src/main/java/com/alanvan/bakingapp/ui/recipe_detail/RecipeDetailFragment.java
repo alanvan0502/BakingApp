@@ -46,7 +46,7 @@ public class RecipeDetailFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         RecipeDetailActivity activity = (RecipeDetailActivity) getActivity();
         viewModel = ViewModelProviders.of(activity).get(RecipeDetailViewModel.class);
-
+        controller.setViewModel(viewModel);
     }
 
     @Override

@@ -104,13 +104,6 @@ public class RecipeDetailViewModel extends BaseViewModel {
                                         }
                                     });
                             models.add(stepHolder);
-
-                            if (selectedStepIdLiveData.getValue() != null) {
-                                int selectedStepId = selectedStepIdLiveData.getValue();
-                                if (activity.isTwoPane() && step.getId().equals(selectedStepId)) {
-                                    controller.setStepId(step.getId());
-                                }
-                            }
                         }
                     }
 
