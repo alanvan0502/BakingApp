@@ -3,6 +3,7 @@ package com.alanvan.bakingapp.ui.recipe_detail;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.alanvan.bakingapp.BaseActivity;
 import com.alanvan.bakingapp.R;
@@ -15,13 +16,20 @@ import static com.alanvan.bakingapp.Constants.RECIPE_NAME;
 public class RecipeDetailActivity extends BaseActivity {
 
     private boolean isTwoPane = false;
+    private static final String STEP_ID = "step_id";
+    private RecipeDetailViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
+        viewModel = ViewModelProviders.of(this).get(RecipeDetailViewModel.class);
 
         RecipeDetailFragment fragment = RecipeDetailFragment.getInstance();
+
+        if (savedInstanceState != null) {
+            fragment.setStepId(savedInstanceState.getInt(STEP_ID));
+        }
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -62,5 +70,13 @@ public class RecipeDetailActivity extends BaseActivity {
 
     public boolean isTwoPane() {
         return isTwoPane;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (viewModel.getSelectedStepIdLiveData().getValue() != null) {
+            outState.putInt(STEP_ID, viewModel.getSelectedStepIdLiveData().getValue());
+        }
+        super.onSaveInstanceState(outState);
     }
 }

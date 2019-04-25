@@ -1,6 +1,7 @@
 package com.alanvan.bakingapp.ui.recipe_detail;
 
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -14,6 +15,10 @@ import android.view.ViewGroup;
 import com.alanvan.bakingapp.BaseFragment;
 import com.alanvan.bakingapp.R;
 import com.alanvan.bakingapp.databinding.FragmentRecipeDetailBinding;
+import com.alanvan.bakingapp.ui.epoxy.EpoxyController;
+import com.alanvan.bakingapp.ui.epoxy.RecipeDetailEpoxyController;
+import com.alanvan.bakingapp.utils.RxUtils;
+import com.orhanobut.logger.Logger;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,7 +27,11 @@ public class RecipeDetailFragment extends BaseFragment {
 
     private int recipeId;
 
-    private boolean isTwoPane = false;
+    private int stepId = 0;
+
+    private RecipeDetailEpoxyController controller = new RecipeDetailEpoxyController();
+
+    private RecipeDetailViewModel viewModel;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -35,8 +44,9 @@ public class RecipeDetailFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RecipeDetailViewModel viewModel = ViewModelProviders.of(this).get(RecipeDetailViewModel.class);
-        this.setViewModel(viewModel);
+        RecipeDetailActivity activity = (RecipeDetailActivity) getActivity();
+        viewModel = ViewModelProviders.of(activity).get(RecipeDetailViewModel.class);
+
     }
 
     @Override
@@ -44,7 +54,7 @@ public class RecipeDetailFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         FragmentRecipeDetailBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_recipe_detail, container, false);
-        binding.recyclerView.setControllerAndBuildModels(this.getController());
+        binding.recyclerView.setControllerAndBuildModels(this.controller);
 
         return binding.getRoot();
     }
@@ -55,5 +65,28 @@ public class RecipeDetailFragment extends BaseFragment {
 
     public void setRecipeId(int recipeId) {
         this.recipeId = recipeId;
+    }
+
+    public EpoxyController getController() {
+        return controller;
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        viewModel.buildEpoxyView(this).compose(
+                RxUtils.applyIOSchedulers()
+        ).compose(
+                bindToLifecycle()
+        ).subscribe(result -> {
+            viewModel.getSelectedStepIdLiveData().setValue(stepId);
+            Logger.d("Successfully created view");
+        }, error -> Logger.d("Failed to create view"));
+    }
+
+    public void setStepId(int stepId) {
+        this.stepId = stepId;
     }
 }

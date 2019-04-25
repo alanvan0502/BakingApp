@@ -6,6 +6,10 @@
         <variable
             name="recipeDetailItemClick"
             type="android.view.View.OnClickListener" />
+
+        <variable
+            name="isSelected"
+            type="Boolean"/>
     </data>
 
     <LinearLayout
@@ -20,7 +24,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/step_background"
+            android:background="@{isSelected ? @drawable/step_selected_state : @drawable/step_normal_state}"
             android:onClick="@{recipeDetailItemClick}"
             android:clickable="true"
             android:focusable="true"

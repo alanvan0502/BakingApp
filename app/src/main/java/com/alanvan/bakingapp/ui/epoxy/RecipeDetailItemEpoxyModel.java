@@ -22,6 +22,9 @@ public abstract class RecipeDetailItemEpoxyModel extends BaseEpoxyModel {
     @EpoxyAttribute
     public String stepShortDescription;
 
+    @EpoxyAttribute
+    public boolean isSelected;
+
     public RecipeDetailItemEpoxyModel(BaseFragment fragment) {
         super(fragment);
     }
@@ -33,5 +36,6 @@ public abstract class RecipeDetailItemEpoxyModel extends BaseEpoxyModel {
 
         recipeDetailItemBinding.stepShortDescription.setText(stepShortDescription);
         recipeDetailItemBinding.setRecipeDetailItemClick(recipeDetailItemClick);
+        recipeDetailItemBinding.setIsSelected(isSelected);
     }
 }
