@@ -17,6 +17,7 @@ import com.alanvan.bakingapp.BaseFragment;
 import com.alanvan.bakingapp.BaseViewModel;
 import com.alanvan.bakingapp.R;
 import com.alanvan.bakingapp.databinding.FragmentMainBinding;
+import com.alanvan.bakingapp.injection.Injector;
 import com.alanvan.bakingapp.ui.epoxy.BaseEpoxyModel;
 import com.alanvan.bakingapp.ui.epoxy.EpoxyController;
 import com.alanvan.bakingapp.ui.idling_resource.MainIdlingResource;
@@ -106,6 +107,11 @@ public class MainFragment extends BaseFragment {
 
     private int calculateNoColumns(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+
+        if (DeviceConfigUtils.isOrientationLandscape(Injector.getContextComponent().appContext())) {
+            float screenWidthDp = displayMetrics.heightPixels / displayMetrics.density;
+            return (int) (screenWidthDp / MAIN_LIST_COLUMN_WIDTH_DP + 0.5);
+        }
         float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
         return (int) (screenWidthDp / MAIN_LIST_COLUMN_WIDTH_DP + 0.5);
     }
