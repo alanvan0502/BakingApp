@@ -2,14 +2,13 @@ package com.alanvan.bakingapp.ui.widget;
 
 import android.content.SharedPreferences;
 import android.util.Pair;
+import android.util.SparseArray;
 
 import com.alanvan.bakingapp.injection.Injector;
 import com.alanvan.bakingapp.model.Ingredient;
 import com.alanvan.bakingapp.model.Recipe;
 import com.alanvan.bakingapp.repository.RecipeRepository;
-import com.j256.ormlite.stmt.query.In;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -23,20 +22,23 @@ public class WidgetDataProvider {
 
     private SharedPreferences sharedPreferences = Injector.getContextComponent().sharedPreferences();
 
-    public Observable<List<String>> getRecipeNames() {
+    public Observable<SparseArray<String>> getRecipeIdsAndNames() {
         return recipeRepository.getRecipes().map(recipes -> {
 
-            List<String> recipeNames = new ArrayList<>();
+            SparseArray<String> result = new SparseArray<>();
 
             for (Recipe recipe: recipes) {
-                recipeNames.add(recipe.getName());
+                result.put(recipe.getId(), recipe.getName());
             }
 
-            return recipeNames;
+            return result;
         });
     }
 
-    public void delete
+    public void deleteRecipeFromPrefs(int appWidgetId) {
+        sharedPreferences.edit().remove(WIDGET_PREF_NAME_KEY + appWidgetId).apply();
+        sharedPreferences.edit().remove(WIDGET_PREF_ID_KEY + appWidgetId).apply();
+    }
 
     public Observable<List<Ingredient>> getIngredientList(Integer recipeId) {
         return recipeRepository.getRecipe(recipeId).map(Recipe::getIngredients);

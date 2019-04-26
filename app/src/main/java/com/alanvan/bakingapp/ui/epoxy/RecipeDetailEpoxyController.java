@@ -9,19 +9,35 @@ public class RecipeDetailEpoxyController extends EpoxyController {
 
     private List<BaseEpoxyModel> models = new ArrayList<>();
     private RecipeDetailViewModel viewModel;
+    private boolean isTwoPane;
 
     @Override
     protected void buildModels() {
-        for (int i = 0; i < models.size(); i++) {
-            RecipeDetailItemEpoxyModel_ model = (RecipeDetailItemEpoxyModel_) models.get(i);
-            if (viewModel.getSelectedStepIdLiveData().getValue() != null
-                    && model.id() == viewModel.getSelectedStepIdLiveData().getValue()) {
-                model.isSelected(true);
-            } else {
-                model.isSelected(false);
+        if (isTwoPane) {
+            for (int i = 0; i < models.size(); i++) {
+                if (models.get(i) instanceof RecipeDetailItemEpoxyModel_) {
+                    RecipeDetailItemEpoxyModel_ model = (RecipeDetailItemEpoxyModel_) models.get(i);
+                    if (viewModel.getSelectedStepIdLiveData().getValue() != null
+                            && model.id() == viewModel.getSelectedStepIdLiveData().getValue()) {
+                        model.isSelected(true);
+                    } else {
+                        model.isSelected(false);
+                    }
+                    model.addTo(this);
+                } else {
+                    models.get(i).addTo(this);
+                }
             }
-            model.addTo(this);
+        } else {
+            for (int i = 0; i < models.size(); i++) {
+                models.get(i).addTo(this);
+            }
         }
+
+    }
+
+    public void setTwoPane(boolean twoPane) {
+        isTwoPane = twoPane;
     }
 
     public void setModels(List<BaseEpoxyModel> models) {

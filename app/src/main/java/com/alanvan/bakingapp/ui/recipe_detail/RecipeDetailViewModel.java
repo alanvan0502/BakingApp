@@ -1,18 +1,14 @@
 package com.alanvan.bakingapp.ui.recipe_detail;
 
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 
 import com.alanvan.bakingapp.BaseFragment;
 import com.alanvan.bakingapp.BaseViewModel;
 import com.alanvan.bakingapp.R;
-import com.alanvan.bakingapp.RxFragment;
 import com.alanvan.bakingapp.injection.Injector;
-import com.alanvan.bakingapp.model.Ingredient;
 import com.alanvan.bakingapp.model.Recipe;
 import com.alanvan.bakingapp.model.Step;
 import com.alanvan.bakingapp.repository.RecipeRepository;
@@ -23,7 +19,6 @@ import com.alanvan.bakingapp.ui.epoxy.RecipeIngredientsEpoxyModel_;
 import com.alanvan.bakingapp.ui.step_detail.StepDetailActivity;
 import com.alanvan.bakingapp.ui.step_detail.StepDetailFragment;
 import com.alanvan.bakingapp.ui.step_detail.StepDetailViewModel;
-import com.alanvan.bakingapp.utils.RxUtils;
 import com.alanvan.bakingapp.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -65,6 +60,8 @@ public class RecipeDetailViewModel extends BaseViewModel {
                     RecipeDetailEpoxyController controller = (RecipeDetailEpoxyController) fragment.getController();
 
                     if (activity != null) {
+                        controller.setTwoPane(activity.isTwoPane());
+
                         // add list of ingredients if activity is not 2 panes
                         if (!activity.isTwoPane()) {
                             models.add(new RecipeIngredientsEpoxyModel_(fragment)

@@ -38,9 +38,12 @@ public class WidgetProvider extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
+        for (int id: appWidgetIds) {
+            widgetDataProvider.deleteRecipeFromPrefs(id);
+        }
     }
 
-    public void updateAppWidget(Context context, AppWidgetManager manager, int appWidgetId, String recipeName, List<Ingredient> ingredientList) {
+    public static void updateAppWidget(Context context, AppWidgetManager manager, int appWidgetId, String recipeName, List<Ingredient> ingredientList) {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_ingredient_list);
         views.setTextViewText(R.id.widgetRecipeName, recipeName);
