@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <com.alanvan.bakingapp.ui.epoxy.BakingAppRecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/mainRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintEnd_toEndOf="parent"

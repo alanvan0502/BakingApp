@@ -4,9 +4,13 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 
 import com.alanvan.bakingapp.BaseActivity;
 import com.alanvan.bakingapp.R;
+import com.alanvan.bakingapp.ui.idling_resource.RecipeIdlingResource;
 import com.alanvan.bakingapp.ui.step_detail.StepDetailFragment;
 import com.alanvan.bakingapp.ui.step_detail.StepDetailViewModel;
 
@@ -19,6 +23,8 @@ public class RecipeDetailActivity extends BaseActivity {
     private static final String STEP_ID = "step_id";
     private RecipeDetailViewModel viewModel;
 
+    private RecipeIdlingResource idlingResource;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +32,7 @@ public class RecipeDetailActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this).get(RecipeDetailViewModel.class);
 
         RecipeDetailFragment fragment = RecipeDetailFragment.getInstance();
+        fragment.setIdlingResource(idlingResource);
 
         if (savedInstanceState != null) {
             fragment.setStepId(savedInstanceState.getInt(STEP_ID));
@@ -36,7 +43,7 @@ public class RecipeDetailActivity extends BaseActivity {
             fragment.setRecipeId(intent.getIntExtra(RECIPE_ID, -1));
 
             String recipeName = intent.getStringExtra(RECIPE_NAME);
-            if (!recipeName.equals("")) {
+            if (recipeName != null && !recipeName.equals("")) {
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(recipeName);
                 }
@@ -78,5 +85,14 @@ public class RecipeDetailActivity extends BaseActivity {
             outState.putInt(STEP_ID, viewModel.getSelectedStepIdLiveData().getValue());
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @VisibleForTesting
+    @Nullable
+    public IdlingResource getIdlingResource() {
+        if (idlingResource == null) {
+            idlingResource = new RecipeIdlingResource();
+        }
+        return idlingResource;
     }
 }

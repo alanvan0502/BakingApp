@@ -19,6 +19,7 @@ import com.alanvan.bakingapp.R;
 import com.alanvan.bakingapp.databinding.FragmentMainBinding;
 import com.alanvan.bakingapp.ui.epoxy.BaseEpoxyModel;
 import com.alanvan.bakingapp.ui.epoxy.EpoxyController;
+import com.alanvan.bakingapp.ui.idling_resource.MainIdlingResource;
 import com.alanvan.bakingapp.utils.DeviceConfigUtils;
 import com.alanvan.bakingapp.utils.RxUtils;
 
@@ -49,6 +50,8 @@ public class MainFragment extends BaseFragment {
         return new MainFragment();
     }
 
+    private MainIdlingResource idlingResource;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,10 +66,10 @@ public class MainFragment extends BaseFragment {
         if (DeviceConfigUtils.isDeviceSizeLarge(Objects.requireNonNull(this.getContext()))
                 || DeviceConfigUtils.isOrientationLandscape(this.getContext())) {
             int columnCount = calculateNoColumns(Objects.requireNonNull(this.getContext()));
-            binding.recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), columnCount));
+            binding.mainRecyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), columnCount));
         }
 
-        binding.recyclerView.setControllerAndBuildModels(this.getController());
+        binding.mainRecyclerView.setControllerAndBuildModels(this.getController());
 
         return binding.getRoot();
     }
@@ -78,12 +81,16 @@ public class MainFragment extends BaseFragment {
 
         Disposable d = viewModel.setupView(this).compose(
                 RxUtils.applyIOSchedulers()
-        ).compose(
+        ).doOnSubscribe(disposable -> {
+            if (idlingResource != null) idlingResource.setIsIdling(false);
+        }).compose(
                 bindToLifecycle()
         ).subscribe(result -> {
             models.addAll(result);
             controller.setModels(models);
             controller.requestModelBuild();
+
+            if (idlingResource != null) idlingResource.setIsIdling(true);
         });
 
         bag.add(d);
@@ -109,5 +116,9 @@ public class MainFragment extends BaseFragment {
         if (bag != null && !bag.isDisposed()) {
             bag.dispose();
         }
+    }
+
+    public void setIdlingResource(MainIdlingResource idlingResource) {
+        this.idlingResource = idlingResource;
     }
 }

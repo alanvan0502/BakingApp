@@ -7,6 +7,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import com.alanvan.bakingapp.R;
 import com.alanvan.bakingapp.databinding.FragmentRecipeDetailBinding;
 import com.alanvan.bakingapp.ui.epoxy.EpoxyController;
 import com.alanvan.bakingapp.ui.epoxy.RecipeDetailEpoxyController;
+import com.alanvan.bakingapp.ui.idling_resource.MainIdlingResource;
+import com.alanvan.bakingapp.ui.idling_resource.RecipeIdlingResource;
 import com.alanvan.bakingapp.utils.RxUtils;
 import com.orhanobut.logger.Logger;
 
@@ -35,6 +38,8 @@ public class RecipeDetailFragment extends BaseFragment {
     private RecipeDetailEpoxyController controller = new RecipeDetailEpoxyController();
 
     private RecipeDetailViewModel viewModel;
+
+    private RecipeIdlingResource idlingResource;
 
     private CompositeDisposable bag = new CompositeDisposable();
 
@@ -85,8 +90,11 @@ public class RecipeDetailFragment extends BaseFragment {
                 RxUtils.applyIOSchedulers()
         ).compose(
                 bindToLifecycle()
-        ).subscribe(result -> {
+        ).doOnSubscribe(disposable -> {
+            if (idlingResource != null) idlingResource.setIsIdling(false);
+        }).subscribe(result -> {
             viewModel.getSelectedStepIdLiveData().setValue(stepId);
+            if (idlingResource != null) idlingResource.setIsIdling(true);
             Logger.d("Successfully created view");
         }, error -> Logger.d("Failed to create view"));
 
@@ -103,5 +111,9 @@ public class RecipeDetailFragment extends BaseFragment {
         if (bag != null && bag.isDisposed()) {
             bag.dispose();
         }
+    }
+
+    public void setIdlingResource(RecipeIdlingResource idlingResource) {
+        this.idlingResource = idlingResource;
     }
 }
