@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+
 import static com.alanvan.bakingapp.Constants.MAIN_LIST_COLUMN_WIDTH_DP;
 
 public class MainFragment extends BaseFragment {
@@ -35,6 +38,8 @@ public class MainFragment extends BaseFragment {
     private List<BaseEpoxyModel> models = new ArrayList<>();
 
     private EpoxyController controller = new EpoxyController();
+
+    private CompositeDisposable bag = new CompositeDisposable();
 
     public MainFragment() {
         // Required empty public constructor
@@ -71,7 +76,7 @@ public class MainFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel.setupView(this).compose(
+        Disposable d = viewModel.setupView(this).compose(
                 RxUtils.applyIOSchedulers()
         ).compose(
                 bindToLifecycle()
@@ -80,6 +85,8 @@ public class MainFragment extends BaseFragment {
             controller.setModels(models);
             controller.requestModelBuild();
         });
+
+        bag.add(d);
     }
 
     public EpoxyController getController() {
@@ -94,5 +101,13 @@ public class MainFragment extends BaseFragment {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
         return (int) (screenWidthDp / MAIN_LIST_COLUMN_WIDTH_DP + 0.5);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (bag != null && !bag.isDisposed()) {
+            bag.dispose();
+        }
     }
 }

@@ -3,4 +3,6 @@
     <string name="recipe_icon">recipe image</string>
     <string name="servings">Servings:</string>
     <string name="ingredient_list_header">Ingredients List:</string>
+    <string name="widget_select_a_recipe">Select a recipe</string>
+    <string name="select">Select</string>
 </resources>

@@ -24,6 +24,7 @@ import com.alanvan.bakingapp.ui.step_detail.StepDetailActivity;
 import com.alanvan.bakingapp.ui.step_detail.StepDetailFragment;
 import com.alanvan.bakingapp.ui.step_detail.StepDetailViewModel;
 import com.alanvan.bakingapp.utils.RxUtils;
+import com.alanvan.bakingapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +113,20 @@ public class RecipeDetailViewModel extends BaseViewModel {
                 }
             });
 
+            // add ingredients if 2-pane
+            RecipeDetailActivity activity = (RecipeDetailActivity) fragment.getActivity();
+
+            if (activity != null && activity.isTwoPane()) {
+
+                IngredientListFragment ingredientListFragment = IngredientListFragment.getInstance();
+
+                IngredientsListViewModel viewModel = ViewModelProviders.of(activity).get(IngredientsListViewModel.class);
+                viewModel.setRecipeId(recipe.getId());
+
+                activity.replaceFragment(ingredientListFragment, R.id.fragment_ingredient_list,
+                        IngredientListFragment.class.getName());
+            }
+
             return true;
         });
 
@@ -125,27 +140,6 @@ public class RecipeDetailViewModel extends BaseViewModel {
     }
 
     private String loadIngredients(Context context, Recipe recipe) {
-        List<Ingredient> ingredients = recipe.getIngredients();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append(context.getString(R.string.ingredient_list_header));
-        sb.append("\n");
-
-        for (Ingredient ingredient : ingredients) {
-
-            String ingredientString = ingredient.getIngredient();
-            String ingredientCap = ingredientString.substring(0, 1).toUpperCase()
-                    + ingredientString.substring(1);
-
-            sb.append("\u2022 ")
-                    .append(ingredientCap)
-                    .append(" (").append(ingredient.getQuantity())
-                    .append(" ")
-                    .append(ingredient.getMeasure()).append(") ");
-            sb.append("\n");
-        }
-
-        return sb.toString();
+        return StringUtils.getIngredientListString(context, recipe);
     }
 }

@@ -20,6 +20,9 @@ import com.alanvan.bakingapp.ui.epoxy.RecipeDetailEpoxyController;
 import com.alanvan.bakingapp.utils.RxUtils;
 import com.orhanobut.logger.Logger;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -32,6 +35,8 @@ public class RecipeDetailFragment extends BaseFragment {
     private RecipeDetailEpoxyController controller = new RecipeDetailEpoxyController();
 
     private RecipeDetailViewModel viewModel;
+
+    private CompositeDisposable bag = new CompositeDisposable();
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -76,7 +81,7 @@ public class RecipeDetailFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel.buildEpoxyView(this).compose(
+        Disposable d = viewModel.buildEpoxyView(this).compose(
                 RxUtils.applyIOSchedulers()
         ).compose(
                 bindToLifecycle()
@@ -84,9 +89,19 @@ public class RecipeDetailFragment extends BaseFragment {
             viewModel.getSelectedStepIdLiveData().setValue(stepId);
             Logger.d("Successfully created view");
         }, error -> Logger.d("Failed to create view"));
+
+        bag.add(d);
     }
 
     public void setStepId(int stepId) {
         this.stepId = stepId;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (bag != null && bag.isDisposed()) {
+            bag.dispose();
+        }
     }
 }
